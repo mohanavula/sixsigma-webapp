@@ -39,17 +39,19 @@
           </div>
           <div class="w-full md:w-full px-3 mb-6">
             <button
-              class="appearance-none bg-gray-200 text-gray-900 px-2 py-1 shadow-sm border border-gray-400 rounded-md focus:outline-none hover:border-gray-500 focus:border-gray-500"
+              class="inline-block appearance-none bg-gray-200 text-gray-900 px-2 py-1 shadow-sm border border-gray-400 rounded-md focus:outline-none hover:border-gray-500 focus:border-gray-500"
               type="submit" :class="loading ? 'opacity-50 cursor-not-allowed' : '' "
               :disabled="loading"
             >
               <img src="../../assets/spinner.gif" style="width: 20px" class="inline pr-2" v-if="loading">
               <span>Login</span>
             </button>
+            <div class="ml-4 inline-block py-1" id="google-signin-btn"></div>
           </div>
         </div>
       </form>
     </div>
+    
   </div>
 </template>
 
@@ -64,7 +66,22 @@ export default {
       loading: false,
     };
   },
+
+  mounted() {
+    gapi.signin2.render('google-signin-btn', {
+      onsuccess: this.onSignIn
+    })
+  },
+
   methods: {
+    onSignIn(googleUser) {
+      var profile = googleUser.getBasicProfile();
+      console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+      console.log('Name: ' + profile.getName());
+      console.log('Image URL: ' + profile.getImageUrl());
+      console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+    },
+
     login() {
       if (this.username.trim() == "" || this.password.trim() == "") {
         error_message = 'Please enter both email and password'
