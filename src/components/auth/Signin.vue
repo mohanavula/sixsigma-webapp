@@ -47,6 +47,7 @@
               <span>Sign in</span>
             </button>
             <div class="ml-4 inline-block py-1" id="google-signin-btn"></div>
+            <button type="button" class="inline-block appearance-none bg-gray-200 text-gray-900 px-2 py-1 shadow-sm border border-gray-400 rounded-md focus:outline-none hover:border-gray-500 focus:border-gray-500" @click="logInWithFacebook">Login with Facebook</button>
           </div>
         </div>
       </form>
@@ -83,7 +84,7 @@ export default {
       console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
       var user = {
         name: profile.getName(),
-        email: profile.getEmail,
+        email: profile.getEmail(),
         role: 'guest',
         token: '',
         provider: 'google',
@@ -117,7 +118,57 @@ export default {
           this.error_message = error_message
           this.loading = false
         });
-    }
+    },
+
+    async logInWithFacebook() {
+      await this.loadFacebookSDK(document, "script", "facebook-jssdk")
+      await this.initFacebook()
+      window.FB.login(response => {
+        if (response.authResponse) {
+          console.log("You are logged in &amp; cookie set!")
+          FB.api('/me', {fields: 'name, email'}, res => {
+            console.log(res)
+            let user = {
+              name: res.name,
+              email: res.email,
+              role: 'guest',
+              token: '',
+              provider: 'facebook',
+            }
+            this.$store.commit('setUser', user)
+            localStorage.setItem('user', JSON.stringify(user))
+            this.$router.push({ name: "about"})
+          })
+          // Now you can redirect the user or do an AJAX request to
+          // a PHP script that grabs the signed request from the cookie.
+        } else {
+          alert("User cancelled login or did not fully authorize.")
+        }
+      }, { scope: 'public_profile, email'});
+      return false
+    },
+
+    async initFacebook() {
+      window.fbAsyncInit = function() {
+        window.FB.init({
+          appId: "291567425250277",
+          cookie: true,
+          xfbml: true,
+          version: "v7.0"
+        })
+      }
+    },
+
+    async loadFacebookSDK(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) {
+        return
+      }
+      js = d.createElement(s)
+      js.id = id
+      js.src = "https://connect.facebook.net/en_US/sdk.js"
+      fjs.parentNode.insertBefore(js, fjs)
+    },
   }
 };
 </script>
