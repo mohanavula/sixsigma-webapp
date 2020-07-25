@@ -22,14 +22,14 @@ export default new Router({
       component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
     },
     {
-      path: '/login',
-      name: 'login',
-      component: () => import(/* webpackChunkName: "loginout" */ './components/auth/Login')
+      path: '/signin',
+      name: 'signin',
+      component: () => import(/* webpackChunkName: "auth" */ './components/auth/Signin')
     },
     {
-      path: '/logout',
-      name: 'logout',
-      component: () => import(/* webpackChunkName: "loginout" */ './components/auth/Logout')
+      path: '/signout',
+      name: 'signout',
+      component: () => import(/* webpackChunkName: "auth" */ './components/auth/Signout')
     }
   ]
 })

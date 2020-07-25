@@ -7,29 +7,43 @@ axios.defaults.baseURL = 'http://sixsigma.api/api'
 
 export default new Vuex.Store({
   state: {
-    token: localStorage.getItem('access_token') || null,
+    user: JSON.parse(localStorage.getItem('user')) || null,
+    
+  },
 
-  },
   getters: {
-    loggedIn(state) {
-      return state.token !== null
+    signedIn(state) {
+      return state.user !== null
     },
+
+    user(state) {
+      return state.user
+    }
   },
+
   mutations: {
-    retrieveToken(state, token) {
-      state.token = token
+    destroyUser(state) {
+      state.user = null
     },
-    destroyToken(state) {
-      state.token = null
+
+    setUser(state, user) {
+      state.user = {
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        token: user.token,
+        provider: user.provider,
+      }
     },
   },
+
   actions: {
-    register(context, data) {
+    doRegisterDomainUser(context, user) {
       return new Promise((resolve, reject) => {
         axios.post('/register', {
-          name: data.name,
-          email: data.email,
-          password: data.password,
+          name: user.name,
+          email: user.email,
+          password: user.password,
         })
           .then(response => {
             resolve(response)
@@ -40,43 +54,61 @@ export default new Vuex.Store({
       })
     },
 
-    destroyToken(context) {
-      axios.defaults.headers.common['Authorization'] = 'Bearer ' + context.state.token
-      if (context.getters.loggedIn) {
-        return new Promise((resolve, reject) => {
-          axios.post('/logout')
-            .then(response => {
-              localStorage.removeItem('access_token')
-              context.commit('destroyToken')
-              resolve(response)
-              // console.log(response);
-              // context.commit('addTodo', response.data)
-            })
-            .catch(error => {
-              localStorage.removeItem('access_token')
-              context.commit('destroyToken')
-              reject(error)
-            })
-        })
-      }
+    doDomainSignout(context) {
+      if (!context.getters.signedIn) return
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + context.state.user.token
+      return new Promise((resolve, reject) => {
+        axios.post('/logout')
+          .then(response => {
+            context.commit('destroyUser')
+            localStorage.removeItem('user')
+            resolve(response)
+          })
+          .catch(error => {
+            context.commit('destroyUser')
+            localStorage.removeItem('user')
+            reject(error)
+          })
+      })
     },
 
-    retrieveToken(context, credentials) {
+    doDomainSignin(context, credentials) {
+      let user = {}
+      let token = null
       return new Promise((resolve, reject) => {
         axios.post('/login', {
           username: credentials.username,
           password: credentials.password,
         })
           .then(response => {
-            const token = response.data.access_token
-            localStorage.setItem('access_token', token)
-            context.commit('retrieveToken', token)
-            resolve(response)
-            // console.log(response);
-            // context.commit('addTodo', response.data)
+            token = response.data.access_token
+            axios.get('/user', {
+              headers: {
+                Authorization: 'Bearer ' + token
+              }
+            })
+            .then(res => {
+              user = {
+                name: res.data.name,
+                email: res.data.email,
+                role: 'admin',
+                token: token,
+                provider: 'domain'
+              }
+              context.commit('setUser', user)
+              localStorage.setItem('user', JSON.stringify(user))
+              resolve(response)
+            })
+            .catch(err => {
+              console.log(err.message)
+            })
           })
           .catch(error => {
-            reject(error)
+            if (error.response) {
+              reject(error.response.data.message)
+            } else {
+              reject(error.message)
+            }
           })
         })
     },
