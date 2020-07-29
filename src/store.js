@@ -8,6 +8,13 @@ axios.defaults.baseURL = 'http://sixsigma.api/api'
 export default new Vuex.Store({
   state: {
     user: JSON.parse(localStorage.getItem('user')) || null,
+    subject: {
+      code: "1821101",
+      short_name: "M1",
+      name: "Mathematics-1",
+      department: "CED",
+
+    }
     
   },
 
@@ -18,8 +25,13 @@ export default new Vuex.Store({
 
     user(state) {
       return state.user
-    }
-  },
+    },
+
+    getSubject(state) {
+      return state.subject
+    },
+
+  }, 
 
   mutations: {
     destroyUser(state) {
