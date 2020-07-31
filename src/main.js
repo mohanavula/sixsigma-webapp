@@ -5,6 +5,20 @@ import store from './store'
 
 Vue.config.productionTip = false
 
+window.EventDispatcher = new class {
+  constructor() {
+      this.vue = new Vue();
+  }
+
+  fire(event, data = null) {
+      this.vue.$emit(event, data);
+  }
+
+  listen(event, callback) {
+      this.vue.$on(event, callback);
+  }
+};
+
 new Vue({
   router,
   store,

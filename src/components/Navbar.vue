@@ -2,7 +2,7 @@
   <header class="bg-gray-900 sm:flex sm:justify-between sm:items-center sm:px-4 sm:py-3">
     <div class="flex items-center justify-between px-4 py-3 sm:p-0">
       <div>
-        <h2 class="text-yellow-600 text-xl font-bold tracking-wider">sixSIGMA</h2>
+        <router-link class="text-yellow-600 text-xl font-bold tracking-wider" to="/">sixSIGMA</router-link>
       </div>
       <div class="sm:hidden">
         <button @click="isOpen = !isOpen" type="button" class="block text-gray-500 hover:text-white focus:text-white focus:outline-none">
@@ -14,7 +14,7 @@
       </div>
     </div>
     <nav :class="isOpen ? 'block' : 'hidden'" class="px-2 pt-2 pb-4 sm:flex sm:p-0">
-      <a href="#" class="block px-2 py-1 text-white font-semibold rounded hover:bg-gray-800">List your property</a>
+      <router-link class="mt-1 block px-2 py-1 text-white font-semibold rounded hover:bg-gray-700 sm:mt-0 sm:ml-2" to="/programs">Programs</router-link>
       <router-link class="mt-1 block px-2 py-1 text-white font-semibold rounded hover:bg-gray-700 sm:mt-0 sm:ml-2" v-if="!signedIn" to="/signin">Sign in</router-link>
       <router-link class="mt-1 block px-2 py-1 text-white font-semibold rounded hover:bg-gray-700 sm:mt-0 sm:ml-2" v-if="signedIn" to="/signout">Sign out</router-link>
     </nav>

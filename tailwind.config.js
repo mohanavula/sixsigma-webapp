@@ -31,7 +31,16 @@ module.exports = {
         '11/12': '91.666667%',
       }
     },
+    gradients: theme => ({
+      'gray-light': [theme('colors.gray.300'), theme('colors.gray.100')],
+      'gray-dark': [theme('colors.gray.400'), theme('colors.gray.200')],
+      // ...
+    })
   },
-  variants: {},
-  plugins: [],
+  variants: {
+    gradients: ['responsive', 'hover'],
+  },
+  plugins: [
+    require('./src/plugins/gradients')
+  ],
 }

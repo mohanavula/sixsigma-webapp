@@ -37,6 +37,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
   props: ['code'],
 
@@ -47,9 +48,10 @@ export default {
   },
 
   computed: {
-    subject() {
-      return this.$store.getters.getSubject
-    },
+    ...mapState(['subject'])
+    // subject() {
+    //   return this.$store.getters.getSubject
+    // },
   },
 
   mounted() {

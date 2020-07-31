@@ -30,6 +30,19 @@ export default new Router({
       path: '/signout',
       name: 'signout',
       component: () => import(/* webpackChunkName: "auth" */ './components/auth/Signout')
-    }
+    },
+    {
+      path: '/programs',
+      name: 'programs',
+      component: () => import(/* webpackChunkName: "acad" */ './views/Programs'),
+      children: [
+        {
+          path: 'profile/:id',
+          name: 'programProfile',
+          component: () => import(/* webpackChunkName: "acad" */ './components/programs/ProgramProfile'),
+        },
+        
+      ]
+    },
   ]
 })

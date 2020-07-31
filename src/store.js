@@ -8,6 +8,10 @@ axios.defaults.baseURL = 'http://sixsigma.api/api'
 export default new Vuex.Store({
   state: {
     user: JSON.parse(localStorage.getItem('user')) || null,
+    regulations: JSON.parse(localStorage.getItem('regulations')) || [],
+    // specializations: [],
+    // fetchedRegulations: false,
+    // fetchedSpecializations: false,
     subject: {
       code: "1821101",
       short_name: "M1",
@@ -19,23 +23,49 @@ export default new Vuex.Store({
   },
 
   getters: {
+    fetchedRegulations: (state) => {
+      return state.regulations.length > 0
+    },
+
+    fetchedSpecializations: (state) => (regulation_id) => {
+      return state.regulations.find(r => r.id == regulation_id).hasOwnProperty("specializations")
+    },
+
+    // getRegulations(state) {
+    //   return state.regulations
+    // },
+
+    // getSpecializations(state, regulation_id) {
+    //   return state.specializations
+    // },
+
     signedIn(state) {
       return state.user !== null
     },
 
-    user(state) {
-      return state.user
-    },
+    // user(state) {
+    //   return state.user
+    // },
 
-    getSubject(state) {
-      return state.subject
-    },
+    // getSubject(state) {
+    //   return state.subject
+    // },
 
   }, 
 
   mutations: {
     destroyUser(state) {
       state.user = null
+    },
+
+    setRegulations(state, regulations) {
+      state.regulations = Array.from(regulations)
+      state.fetchedRegulations = true
+    },
+
+    setSpecializations(state, payload) {
+      state.regulations.find(r => r.id == payload.regulation_id)['specializations'] = Array.from(payload.specializations)
+      localStorage.setItem('regulations', JSON.stringify(state.regulations))
     },
 
     setUser(state, user) {
@@ -50,6 +80,41 @@ export default new Vuex.Store({
   },
 
   actions: {
+    doFetchSpecializations(context, regulation_id) {
+      return new Promise((resolve, reject) => {
+        axios.get('/regulations/' + regulation_id + "/specializations")
+          .then(response => {
+            context.commit('setSpecializations', { regulation_id: regulation_id, specializations: response.data })
+            resolve(response)
+          })
+          .catch(error => {
+            if (error.response) {
+              reject(error.response.data.message)
+            } else {
+              reject(error.message)
+            }
+          })
+      })
+    },
+
+    doFetchRegulations(context) {
+      return new Promise((resolve, reject) => {
+        axios.get('/regulations')
+          .then(response => {
+            context.commit('setRegulations', response.data)
+            localStorage.setItem('regulations', JSON.stringify(response.data))
+            resolve(response)
+          })
+          .catch(error => {
+            if (error.response) {
+              reject(error.response.data.message)
+            } else {
+              reject(error.message)
+            }
+          })
+      })
+    },
+
     doRegisterDomainUser(context, user) {
       return new Promise((resolve, reject) => {
         axios.post('/register', {
