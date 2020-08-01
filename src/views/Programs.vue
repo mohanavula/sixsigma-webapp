@@ -7,7 +7,7 @@
                         <RegulationIndexCard  :regulation="regulation" />
                     </router-link>
             </div>
-            <div class="content md:ml-2 bg-gray-700 text-gray-200 flex-grow h-screen">
+            <div class="content md:ml-2 bg-gray-700 text-gray-200 flex-grow h-full">
                 <router-view></router-view>
             </div>
         </div>

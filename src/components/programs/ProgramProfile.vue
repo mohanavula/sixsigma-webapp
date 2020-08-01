@@ -33,20 +33,28 @@
         <div class="flex justify-start mt-6">
             <div class="text-xs tracking-wider mr-5">Explore</div>
             <div class="w-24 text-xs text-right uppercase tracking-wider mr-3 border-b border-gray-400">Regulations</div>
-            <div class="w-24 text-xs text-right uppercase tracking-wider mr-3 border-b border-gray-400">Scheme</div>
+            <div class="cursor-pointer w-24 text-xs text-right uppercase tracking-wider mr-3" :class="activeTab == 'scheme' ? 'border-b-2 border-red-500' : 'border-b border-gray-400' " @click="activeTab = 'scheme'">Scheme</div>
             <div class="w-24 text-xs text-right uppercase tracking-wider mr-3 border-b border-gray-400">Subjects</div>
             <div class="w-24 text-xs text-right uppercase tracking-wider mr-3 border-b border-gray-400">Performance</div>
             <div class="w-24 text-xs text-right uppercase tracking-wider mr-3 border-b border-gray-400">Feedback</div>
         </div>
+        <Scheme v-if="activeTab == 'scheme'" :regulation="regulation"/>
     </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
+import Scheme from './Scheme'
 export default {
+    components: {
+        Scheme,
+
+    },
+
     data() {
         return {
             isLoading: false,
+            activeTab: "",
         }
     },
 
@@ -69,14 +77,52 @@ export default {
     },
 
     created() {
-        if (!this.fetchedSpecializations) {
-            this.isLoading = true
-            this.$store.dispatch('doFetchSpecializations', this.id).then(() => {
-                this.isLoading = false
-            }).catch(() => {
-                this.isLoading = false
-            })
-        }
+        // let vm = this
+        // if (!vm.fetchedSpecializations) {
+        //     vm.isLoading = true
+        //     vm.$store.dispatch('doFetchSpecializations', vm.id).then(() => {
+        //         vm.isLoading = false
+        //     }).catch(() => {
+        //         vm.isLoading = false
+        //     })
+        // }
+
+        // if (!vm.fetchedSemesters) {
+        //     vm.isLoading = true
+        //     vm.$store.dispatch('doFetchSemesters', regulation.id).then(() => {
+        //         vm.isLoading = false
+        //     }).catch(() => {
+        //         vm.isLoading = false
+        //     })
+        // }
+
+        // if (!vm.fetchedScheme) {
+        //     vm.isLoading = true
+        //     vm.$store.dispatch('doFetchScheme', regulation.id).then(() => {
+        //         vm.isLoading = false
+        //     }).catch(() => {
+        //         vm.isLoading = false
+        //     })
+        // }
+
+        this.fetcheData(this.id)
     },
+
+    methods: {
+        showTab(tab) {
+
+        },
+
+        async fetcheData(regulation_id) {
+            await this.$store.dispatch('doFetchSpecializations', regulation_id)
+                .then(() => {
+                    this.$store.dispatch('doFetchSemesters', regulation_id)
+                })
+                .then(() => {
+                    this.$store.dispatch('doFetchScheme', regulation_id)
+                })
+        },
+    },
+
 }
 </script>

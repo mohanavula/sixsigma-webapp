@@ -31,6 +31,14 @@ export default new Vuex.Store({
       return state.regulations.find(r => r.id == regulation_id).hasOwnProperty("specializations")
     },
 
+    fetchedScheme: (state) => (regulation_id) => {
+      return state.regulations.find(r => r.id == regulation_id).hasOwnProperty("scheme")
+    },
+
+    fetchedSemesters: (state) => (regulation_id) => {
+      return state.regulations.find(r => r.id == regulation_id).hasOwnProperty("semesters")
+    },
+
     // getRegulations(state) {
     //   return state.regulations
     // },
@@ -60,11 +68,21 @@ export default new Vuex.Store({
 
     setRegulations(state, regulations) {
       state.regulations = Array.from(regulations)
-      state.fetchedRegulations = true
+      localStorage.setItem('regulations', JSON.stringify(state.regulations))
     },
 
     setSpecializations(state, payload) {
       state.regulations.find(r => r.id == payload.regulation_id)['specializations'] = Array.from(payload.specializations)
+      localStorage.setItem('regulations', JSON.stringify(state.regulations))
+    },
+
+    setScheme(state, payload) {
+      state.regulations.find(r => r.id == payload.regulation_id)['scheme'] = Array.from(payload.scheme)
+      localStorage.setItem('regulations', JSON.stringify(state.regulations))
+    },
+
+    setSemesters(state, payload) {
+      state.regulations.find(r => r.id == payload.regulation_id)['semesters'] = Array.from(payload.semesters)
       localStorage.setItem('regulations', JSON.stringify(state.regulations))
     },
 
@@ -80,6 +98,40 @@ export default new Vuex.Store({
   },
 
   actions: {
+    doFetchSemesters(context, regulation_id) {
+      return new Promise((resolve, reject) => {
+        axios.get('/regulations/' + regulation_id + "/semesters")
+          .then(response => {
+            context.commit('setSemesters', { regulation_id: regulation_id, semesters: response.data })
+            resolve(response)
+          })
+          .catch(error => {
+            if (error.response) {
+              reject(error.response.data.message)
+            } else {
+              reject(error.message)
+            }
+          })
+      })
+    }, 
+
+    doFetchScheme(context, regulation_id) {
+      return new Promise((resolve, reject) => {
+        axios.get('/regulations/' + regulation_id + "/scheme")
+          .then(response => {
+            context.commit('setScheme', { regulation_id: regulation_id, scheme: response.data })
+            resolve(response)
+          })
+          .catch(error => {
+            if (error.response) {
+              reject(error.response.data.message)
+            } else {
+              reject(error.message)
+            }
+          })
+      })
+    }, 
+
     doFetchSpecializations(context, regulation_id) {
       return new Promise((resolve, reject) => {
         axios.get('/regulations/' + regulation_id + "/specializations")
@@ -102,7 +154,6 @@ export default new Vuex.Store({
         axios.get('/regulations')
           .then(response => {
             context.commit('setRegulations', response.data)
-            localStorage.setItem('regulations', JSON.stringify(response.data))
             resolve(response)
           })
           .catch(error => {
