@@ -38,7 +38,7 @@
             <div class="w-24 text-xs text-right uppercase tracking-wider mr-3 border-b border-gray-400">Performance</div>
             <div class="w-24 text-xs text-right uppercase tracking-wider mr-3 border-b border-gray-400">Feedback</div>
         </div>
-        <Scheme v-if="activeTab == 'scheme'" :regulation="regulation"/>
+        <Scheme v-if="activeTab == 'scheme'" :regulation="regulation" class="mt-6"/>
     </div>
 </template>
 
