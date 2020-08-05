@@ -41,15 +41,28 @@ export default {
     },
 
     created() {
-        if(!this.fetchedRegulations) {
-            this.isLoading = true
-            this.$store.dispatch('doFetchRegulations').then(() => {
-                this.isLoading = false
-            }).catch(() => {
-                this.isLoading = false
-            })
-        }
+        // if(!this.fetchedRegulations) {
+        //     this.isLoading = true
+        //     this.$store.dispatch('doFetchRegulations').then(() => {
+        //         this.isLoading = false
+        //     }).catch(() => {
+        //         this.isLoading = false
+        //     })
+        // }
+        this.fetchBasicData()
     },
+
+    methods: {
+        async fetchBasicData() {
+            if (!this.fetchedRegulations) {
+                await this.$store.dispatch('doFetchRegulations')
+                    .then(() => {
+                        this.$store.dispatch('doFetchDepartments')
+                    })
+            }
+        },
+
+    }
     
 }
 </script>

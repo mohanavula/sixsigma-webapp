@@ -33,28 +33,33 @@
         <div class="flex justify-start mt-6">
             <div class="text-xs tracking-wider mr-5">Explore</div>
             <div class="w-24 text-xs text-right uppercase tracking-wider mr-3 border-b border-gray-400">Regulations</div>
-            <div class="cursor-pointer w-24 text-xs text-right uppercase tracking-wider mr-3" :class="activeTab == 'scheme' ? 'border-b-2 border-red-500' : 'border-b border-gray-400' " @click="activeTab = 'scheme'">Scheme</div>
-            <div class="w-24 text-xs text-right uppercase tracking-wider mr-3 border-b border-gray-400">Subjects</div>
+            <div class="cursor-pointer w-24 text-xs text-right uppercase tracking-wider mr-3" :class="activeTab == 'Scheme' ? 'border-b-2 border-red-500' : 'border-b border-gray-400'" @click="activeTab = 'Scheme'">Scheme</div>
+            <div class="cursor-pointer w-24 text-xs text-right uppercase tracking-wider mr-3" :class="activeTab == 'Subjects' ? 'border-b-2 border-red-500' : 'border-b border-gray-400'" @click="activeTab = 'Subjects'">Subjects</div>
             <div class="w-24 text-xs text-right uppercase tracking-wider mr-3 border-b border-gray-400">Performance</div>
             <div class="w-24 text-xs text-right uppercase tracking-wider mr-3 border-b border-gray-400">Feedback</div>
         </div>
-        <Scheme v-if="activeTab == 'scheme'" :regulation="regulation" class="mt-6"/>
+        <Scheme v-if="activeTab == 'Scheme'" :regulation="regulation" class="my-6"/>
+        <Subjects v-if="activeTab == 'Subjects'" :regulation="regulation" class="my-6"/>
+        <!-- <keep-alive>
+        <component :is="activeTab"></component>
+        </keep-alive> -->
     </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
 import Scheme from './Scheme'
+import Subjects from './Subjects'
 export default {
     components: {
         Scheme,
-
+        Subjects,
     },
 
     data() {
         return {
             isLoading: false,
-            activeTab: "",
+            activeTab: "Subjects",
         }
     },
 
@@ -77,35 +82,9 @@ export default {
     },
 
     created() {
-        // let vm = this
-        // if (!vm.fetchedSpecializations) {
-        //     vm.isLoading = true
-        //     vm.$store.dispatch('doFetchSpecializations', vm.id).then(() => {
-        //         vm.isLoading = false
-        //     }).catch(() => {
-        //         vm.isLoading = false
-        //     })
-        // }
-
-        // if (!vm.fetchedSemesters) {
-        //     vm.isLoading = true
-        //     vm.$store.dispatch('doFetchSemesters', regulation.id).then(() => {
-        //         vm.isLoading = false
-        //     }).catch(() => {
-        //         vm.isLoading = false
-        //     })
-        // }
-
-        // if (!vm.fetchedScheme) {
-        //     vm.isLoading = true
-        //     vm.$store.dispatch('doFetchScheme', regulation.id).then(() => {
-        //         vm.isLoading = false
-        //     }).catch(() => {
-        //         vm.isLoading = false
-        //     })
-        // }
-
+        this.isLoading = true
         this.fetcheData(this.id)
+        this.isLoading = false
     },
 
     methods: {

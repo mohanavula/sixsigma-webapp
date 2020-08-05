@@ -9,16 +9,7 @@ export default new Vuex.Store({
   state: {
     user: JSON.parse(localStorage.getItem('user')) || null,
     regulations: JSON.parse(localStorage.getItem('regulations')) || [],
-    // specializations: [],
-    // fetchedRegulations: false,
-    // fetchedSpecializations: false,
-    subject: {
-      code: "1821101",
-      short_name: "M1",
-      name: "Mathematics-1",
-      department: "CED",
-
-    }
+    departments: JSON.parse(localStorage.getItem('departments')) || [],
     
   },
 
@@ -39,31 +30,24 @@ export default new Vuex.Store({
       return state.regulations.find(r => r.id == regulation_id).hasOwnProperty("semesters")
     },
 
-    // getRegulations(state) {
-    //   return state.regulations
-    // },
-
-    // getSpecializations(state, regulation_id) {
-    //   return state.specializations
-    // },
-
-    signedIn(state) {
-      return state.user !== null
+    fetchedDepartments: (state) => {
+      return state.departments.length > 0
     },
 
-    // user(state) {
-    //   return state.user
-    // },
-
-    // getSubject(state) {
-    //   return state.subject
-    // },
+    signedIn: (state) => {
+      return state.user !== null
+    },
 
   }, 
 
   mutations: {
     destroyUser(state) {
       state.user = null
+    },
+
+    setDepartments(state, departments) {
+      state.departments = Array.from(departments)
+      localStorage.setItem('departments', JSON.stringify(departments))
     },
 
     setRegulations(state, regulations) {
@@ -98,6 +82,23 @@ export default new Vuex.Store({
   },
 
   actions: {
+    doFetchDepartments(context) {
+      return new Promise((resolve, reject) => {
+        axios.get('/departments')
+          .then(response => {
+            context.commit('setDepartments', response.data)
+            resolve(response)
+          })
+          .catch(error => {
+            if (error.response) {
+              reject(error.response.data.message)
+            } else {
+              reject(error.message)
+            }
+          })
+      })
+    }, 
+
     doFetchSemesters(context, regulation_id) {
       return new Promise((resolve, reject) => {
         axios.get('/regulations/' + regulation_id + "/semesters")

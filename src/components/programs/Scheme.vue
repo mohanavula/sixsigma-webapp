@@ -24,7 +24,7 @@
             </div>
         </div>
 
-        <div class="flex flex-col mt-2">
+        <div class="flex flex-col mt-2 ml-32">
             <div class="flex my-1">
                 <div class="flex">
                     <div class="w-20 border-b-2 border-gray-400">Code</div>
@@ -53,7 +53,7 @@
             </div>
         </div>
 
-        <Comments :topic="topic" class="mt-16" />
+        <Comments :topic="topic" class="mt-16 ml-32" />
       </div>
 </template>
 
