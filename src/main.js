@@ -20,6 +20,7 @@ window.EventDispatcher = new class {
 };
 
 new Vue({
+  mode: 'histoy',
   router,
   store,
   render: h => h(App)

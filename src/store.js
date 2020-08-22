@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
+import { resolve } from 'core-js/fn/promise'
 
 Vue.use(Vuex)
 axios.defaults.baseURL = 'http://sixsigma.api/api'
@@ -10,7 +11,8 @@ export default new Vuex.Store({
     user: JSON.parse(localStorage.getItem('user')) || null,
     regulations: JSON.parse(localStorage.getItem('regulations')) || [],
     departments: JSON.parse(localStorage.getItem('departments')) || [],
-    
+    subject_ratings: JSON.parse(localStorage.getItem('subject_ratings')) || [],
+    syllabus: JSON.parse(localStorage.getItem('syllabus')) || [],
   },
 
   getters: {
@@ -32,6 +34,38 @@ export default new Vuex.Store({
 
     fetchedDepartments: (state) => {
       return state.departments.length > 0
+    },
+
+    fetchedSubjectRatings: (state) => (subject_id) => {
+      return state.subject_ratings.filter(sr => {
+        return sr.subject_id == subject_id
+      }).length > 0
+    },
+
+    fetchedSyllabus: (state) => (subject_id) => {
+      return state.syllabus.find(s => s.id == subject_id) !== undefined
+    },
+
+    getSyllabus: (state) => (subject_id) => {
+      let obj = state.syllabus.find(s => s.id == subject_id)
+      if (obj !== undefined) {
+        return obj.syllabus
+      }
+      else {
+        return '<h3>Not found</h3>'
+      }
+
+    },
+
+    getSubjectRatings: (state) => (subject_id) => {
+      let item = state.subject_ratings.filter(sr => {
+        return sr.subject_id == subject_id
+      })
+      if (item.length > 0) {
+        return item[0].data
+      } else {
+        return []
+      }
     },
 
     signedIn: (state) => {
@@ -69,6 +103,37 @@ export default new Vuex.Store({
       state.regulations.find(r => r.id == payload.regulation_id)['semesters'] = Array.from(payload.semesters)
       localStorage.setItem('regulations', JSON.stringify(state.regulations))
     },
+    
+    setSubjectRatings(state, payload) {
+      // state.subject_ratings['sr' + payload.subject_id] = JSON.parse(JSON.stringify(payload.data))
+      state.subject_ratings.push({
+        subject_id: payload.subject_id,
+        data: JSON.parse(JSON.stringify(payload.data))
+      })
+      // console.log(state.subject_ratings)
+      localStorage.removeItem('subject_ratings')
+      localStorage.setItem('subject_ratings', JSON.stringify(state.subject_ratings))
+    },
+    
+    appendSyllabus(state, payload) {
+      state.syllabus.push({
+        id: payload.id,
+        syllabus: payload.syllabus
+      })
+      localStorage.removeItem('syllabus')
+      localStorage.setItem('syllabus', JSON.stringify(state.syllabus))
+    },
+
+    appendSubjectRating(state, rating) {
+      let item = state.subject_ratings.filter(sr => {
+        return sr.subject_id == rating.subject_id
+      })
+      if (item) {
+        item[0].data.ratings.push(JSON.parse(JSON.stringify(rating)))
+        localStorage.removeItem('subject_ratings')
+        localStorage.setItem('subject_ratings', JSON.stringify(state.subject_ratings))
+      }
+    },
 
     setUser(state, user) {
       state.user = {
@@ -82,6 +147,51 @@ export default new Vuex.Store({
   },
 
   actions: {
+
+    async doFetchSyllabus(context, subject_id) {
+      let response = await axios.get(`/subjects/${subject_id}/syllabus`)
+      if (response.status == 200) {
+        context.commit('appendSyllabus', {
+          id: subject_id,
+          syllabus: response.data
+        })
+      } else {
+        throw new Error(`Error fetching syllabus with subject id= ${subject_id}! Status code: ${response.status}`)
+      }
+    },
+
+    async doFetchSubjectRatings(context, subject_id) {
+      let response = await axios.get(`/subjects/${subject_id}/ratings`)
+      if (response.status == 200) {
+        context.commit('setSubjectRatings', {
+          subject_id: subject_id,
+          data: response.data
+        })
+      } else {
+        throw new Error(`Error fetching ratings for subject with id: ${subject_id}! Status code: ${response.status}`)
+      }
+    },
+
+    // doFetchSubjectRatings(context, subject_id) {
+    //   return new Promise((resolve, reject) => {
+    //     axios.get('/subjects/' + subject_id + '/ratings')
+    //       .then(response => {
+    //         context.commit('setSubjectRatings', {
+    //           subject_id: subject_id,
+    //           data: response.data
+    //         })
+    //         resolve(response)
+    //       })
+    //       .catch(error => {
+    //         if (error.response) {
+    //           reject(error.response.data.message)
+    //         } else {
+    //           reject(error.message)
+    //         }
+    //       })
+    //   })
+    // }, 
+
     doFetchDepartments(context) {
       return new Promise((resolve, reject) => {
         axios.get('/departments')
@@ -241,5 +351,28 @@ export default new Vuex.Store({
           })
         })
     },
-  }
+
+    doAddRating(context, rating) {
+      return new Promise((resolve, reject) => {
+        axios.post('/subjects/' + rating.subject_id + '/ratings', {
+          author_email: rating.author_email,
+          stars: rating.stars,
+          comment: rating.comment
+        })
+        .then(response => {
+          context.commit('appendSubjectRating', response.data)
+          resolve(response)
+        })
+        .catch(error => {
+          if (error.response) {
+            reject(error.response.data)
+          } else {
+            reject(error.message)
+          }
+        })
+      }
+    )},
+
+
+  } // end of actions
 })

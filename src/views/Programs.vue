@@ -1,14 +1,22 @@
 <template>
     <div class="md:container mx-auto px-4 pt-4">
         <h2 class="text-xl text-gray-800 uppercase font-semibold tracking-wider">Programs</h2>
-        <div class="mt-2 flex flex-col md:flex-row">
-            <div class="sidemenu flex sm:flex-row md:flex-col">
-                    <router-link class="" v-for="regulation in regulations" :key="regulation.id" :to="{ name: 'programProfile', params: { id: regulation.id } }">
-                        <RegulationIndexCard  :regulation="regulation" />
-                    </router-link>
+        <div>
+            <div v-if="isLoading">
+                <div class="shadow-lg rounded-sm bg-gradient-gray-light p-3 mb-1 border border-gray-500 hover:bg-gradient-gray-dark">
+                    <h2 class="text-lg font-semibold text-gray-900">Please wait...</h2>
+                    <hr class="border-2 border-gray-400"> 
+                </div>
             </div>
-            <div class="content md:ml-2 bg-gray-700 text-gray-200 flex-grow h-full">
-                <router-view></router-view>
+            <div v-else class="mt-2 flex flex-col md:flex-row">
+                <div class="sidemenu flex sm:flex-row md:flex-col">
+                        <router-link class="" v-for="regulation in regulations" :key="regulation.id" :to="{ name: 'programProfile', params: { id: regulation.id } }">
+                            <RegulationIndexCard  :regulation="regulation" />
+                        </router-link>
+                </div>
+                <div class="content md:ml-2 bg-gray-700 text-gray-200 flex-grow h-full">
+                    <router-view></router-view>
+                </div>
             </div>
         </div>
     </div>
@@ -24,7 +32,8 @@ export default {
 
     data() {
         return {
-            isLoading: false 
+            isLoading: false,
+            isError: false
         }
     },
 
@@ -49,17 +58,53 @@ export default {
         //         this.isLoading = false
         //     })
         // }
-        this.fetchBasicData()
+        if (this.fetchedRegulations) return
+        let vm = this
+        vm.isLoading = true
+        vm.isError = false
+        vm.fetchBasicData()
+            .then(() => {
+                vm.isLoading = false
+                vm.$router.push({ name: 'programProfile', params: { id: vm.regulations[0].id } })
+            })
+            .catch((e) => {
+                vm.isLoading = false
+                vm.isError = true
+                console.log(e)
+            })
     },
 
     methods: {
+        // async fetchBasicData() {
+        //     let vm = this
+        //     if (!vm.fetchedRegulations) {
+        //         vm.isLoading = true
+        //         await vm.$store.dispatch('doFetchRegulations')
+        //         .then(() => {
+        //             vm.$store.dispatch('doFetchDepartments')
+        //             .then(() => {
+        //                 vm.isLoading =false
+        //             })
+        //         })
+        //         .catch(error => {
+        //             vm.isError = true
+        //             vm.isLoading = false
+        //             if (error.response) {
+        //                 alert(error.response.data.message)
+        //             } else {
+        //                 alert(error.message)
+        //             }
+        //         })
+        //         .finally(() => {
+        //             vm.isLoading = false
+        //         })
+        //     }
+        // },
+
         async fetchBasicData() {
-            if (!this.fetchedRegulations) {
-                await this.$store.dispatch('doFetchRegulations')
-                    .then(() => {
-                        this.$store.dispatch('doFetchDepartments')
-                    })
-            }
+            let regulationsPromise = this.$store.dispatch('doFetchRegulations')
+            let departmentsPromise = this.$store.dispatch('doFetchDepartments')
+            await Promise.all([regulationsPromise, departmentsPromise])
         },
 
     }
