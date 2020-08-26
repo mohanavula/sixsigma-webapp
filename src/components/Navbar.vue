@@ -15,6 +15,7 @@
     </div>
     <nav :class="isOpen ? 'block' : 'hidden'" class="px-2 pt-2 pb-4 sm:flex sm:p-0">
       <router-link class="mt-1 block px-2 py-1 text-white font-semibold rounded hover:bg-gray-700 sm:mt-0 sm:ml-2" to="/programs">Programs</router-link>
+      <router-link class="mt-1 block px-2 py-1 text-white font-semibold rounded hover:bg-gray-700 sm:mt-0 sm:ml-2" to="/admin">Admin</router-link>
       <router-link class="mt-1 block px-2 py-1 text-white font-semibold rounded hover:bg-gray-700 sm:mt-0 sm:ml-2" v-if="!signedIn" to="/signin">Sign in</router-link>
       <router-link class="mt-1 block px-2 py-1 text-white font-semibold rounded hover:bg-gray-700 sm:mt-0 sm:ml-2" v-if="signedIn" to="/signout">Sign out</router-link>
     </nav>

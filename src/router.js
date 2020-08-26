@@ -32,6 +32,38 @@ export default new Router({
       component: () => import(/* webpackChunkName: "auth" */ './components/auth/Signout')
     },
     {
+      path: '/admin',
+      name: 'admin',
+      component: () => import(/* webpackChunkName: "admin" */ './components/admin/AdminDashboard'),
+      children: [
+        {
+          path: 'academics',
+          name: 'adminAcademics',
+          component: () => import(/* webpackChunkName: "admin" */ './components/admin/Academics'),
+        },
+        {
+          path: 'classes',
+          name: 'adminClasses',
+          component: () => import(/* webpackChunkName: "admin" */ './components/admin/Classes'),
+        },
+        {
+          path: 'students',
+          name: 'adminStudents',
+          component: () => import(/* webpackChunkName: "admin" */ './components/admin/Students'),
+        },
+        {
+          path: 'faculty',
+          name: 'adminFaculty',
+          component: () => import(/* webpackChunkName: "admin" */ './components/admin/Faculty'),
+        },
+        {
+          path: 'Exams',
+          name: 'adminExams',
+          component: () => import(/* webpackChunkName: "admin" */ './components/admin/Exams'),
+        },
+      ],
+    },
+    {
       path: '/programs',
       name: 'programs',
       component: () => import(/* webpackChunkName: "acad" */ './views/Programs'),
