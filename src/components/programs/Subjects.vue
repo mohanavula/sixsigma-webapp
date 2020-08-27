@@ -140,13 +140,13 @@
 
 <script>
 import { mapState } from 'vuex'
-import Modal from './../utils/Modal'
+// import Modal from './../utils/Modal'
 import Comments from './../programs/Comments'
 import Reviews from './../programs/Reviews'
 
 export default {
     components: {
-        Modal,
+        // Modal,
         Comments,
         Reviews,
     },
