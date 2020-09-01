@@ -10,23 +10,23 @@
                     <span class="font-normal text-xs ml-3">Manager</span>
                 </div>
                 <div class="flex justify-start"> <!-- stats -->
-                    <div class="w-32 shadow-lg rounded-sm bg-gradient-gray-light mr-2 py-1 px-2 border border-gray-500">
+                    <div class="w-40 shadow-lg rounded-sm bg-gradient-gray-light mr-2 py-1 px-2 border border-gray-500">
                         <div class="w-full text-xs uppercase tracking-wider text-right text-gray-600 border-b border-red-500">Active Classes</div>
                         <div class="text-xl tracking-wider text-gray-900">{{ active_classes }}</div>
                     </div>
-                    <div class="w-32 shadow-lg rounded-sm bg-gradient-gray-light mr-2 py-1 px-2 border border-gray-500">
+                    <div class="w-40 shadow-lg rounded-sm bg-gradient-gray-light mr-2 py-1 px-2 border border-gray-500">
                         <div class="w-full text-xs uppercase tracking-wider text-right text-gray-600 border-b border-red-500">Active Sections</div>
                         <div class="text-xl tracking-wider text-gray-900">{{ active_sections }}</div>
                     </div>
-                    <div class="w-32 shadow-lg rounded-sm bg-gradient-gray-light mr-2 py-1 px-2 border border-gray-500">
+                    <div class="w-40 shadow-lg rounded-sm bg-gradient-gray-light mr-2 py-1 px-2 border border-gray-500">
                         <div class="w-full text-xs uppercase tracking-wider text-right text-gray-600 border-b border-red-500">Working Days Held</div>
                         <div class="text-xl tracking-wider text-gray-900">{{ working_days_held }}</div>
                     </div>
-                    <div class="w-32 shadow-lg rounded-sm bg-gradient-gray-light mr-2 py-1 px-2 border border-gray-500">
-                        <div class="w-full text-xs uppercase tracking-wider text-right text-gray-600 border-b border-red-500">Working Days Remaining</div>
+                    <div class="w-40 shadow-lg rounded-sm bg-gradient-gray-light mr-2 py-1 px-2 border border-gray-500">
+                        <div class="w-full text-xs uppercase tracking-wider text-right text-gray-600 border-b border-red-500">Working Days To Go</div>
                         <div class="text-xl tracking-wider text-gray-900">{{ working_days_remaining }}</div>
                     </div>
-                    <div class="w-32 shadow-lg rounded-sm bg-gradient-gray-light mr-2 py-1 px-2 border border-gray-500">
+                    <div class="w-40 shadow-lg rounded-sm bg-gradient-gray-light mr-2 py-1 px-2 border border-gray-500">
                         <div class="w-full text-xs uppercase tracking-wider text-right text-gray-600 border-b border-red-500">Last Working Day</div>
                         <div class="text-xl tracking-wider text-gray-900">{{ last_working_day }}</div>
                     </div>

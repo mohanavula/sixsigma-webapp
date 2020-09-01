@@ -75,32 +75,6 @@ export default {
     },
 
     methods: {
-        // async fetchBasicData() {
-        //     let vm = this
-        //     if (!vm.fetchedRegulations) {
-        //         vm.isLoading = true
-        //         await vm.$store.dispatch('doFetchRegulations')
-        //         .then(() => {
-        //             vm.$store.dispatch('doFetchDepartments')
-        //             .then(() => {
-        //                 vm.isLoading =false
-        //             })
-        //         })
-        //         .catch(error => {
-        //             vm.isError = true
-        //             vm.isLoading = false
-        //             if (error.response) {
-        //                 alert(error.response.data.message)
-        //             } else {
-        //                 alert(error.message)
-        //             }
-        //         })
-        //         .finally(() => {
-        //             vm.isLoading = false
-        //         })
-        //     }
-        // },
-
         async fetchBasicData() {
             let regulationsPromise = this.$store.dispatch('doFetchRegulations')
             let departmentsPromise = this.$store.dispatch('doFetchDepartments')

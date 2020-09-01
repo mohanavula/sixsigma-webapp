@@ -13,6 +13,7 @@ export default new Vuex.Store({
     departments: JSON.parse(localStorage.getItem('departments')) || [],
     subject_ratings: JSON.parse(localStorage.getItem('subject_ratings')) || [],
     syllabus: JSON.parse(localStorage.getItem('syllabus')) || [],
+    academic_classes: JSON.parse(localStorage.getItem('academic_classes')) || [],
   },
 
   getters: {
@@ -34,6 +35,10 @@ export default new Vuex.Store({
 
     fetchedDepartments: (state) => {
       return state.departments.length > 0
+    },
+
+    fetchedAcademicClasses: (state) => {
+      return state.academic_classes.length > 0
     },
 
     fetchedSubjectRatings: (state) => (subject_id) => {
@@ -81,6 +86,7 @@ export default new Vuex.Store({
 
     setDepartments(state, departments) {
       state.departments = Array.from(departments)
+      localStorage.removeItem('departments')
       localStorage.setItem('departments', JSON.stringify(departments))
     },
 
@@ -113,6 +119,12 @@ export default new Vuex.Store({
       // console.log(state.subject_ratings)
       localStorage.removeItem('subject_ratings')
       localStorage.setItem('subject_ratings', JSON.stringify(state.subject_ratings))
+    },
+
+    setAcademicClasses(state, academic_classes) {
+      state.academic_classes = Array.from(academic_classes)
+      localStorage.removeItem(academic_classes)
+      localStorage.setItem('academic_classes', JSON.stringify(state.academic_classes))
     },
     
     appendSyllabus(state, payload) {
@@ -148,6 +160,16 @@ export default new Vuex.Store({
 
   actions: {
 
+    async doFetchAcademicClasses(context) {
+      let response = await axios.get('/academics/classes')
+      if (response.status == 200) {
+        context.commit('setAcademicClasses', response.data)
+      } else {
+        throw new Error(`Error fetching academic classes! Status code: ${response.status}`)
+      }
+    },
+
+
     async doFetchSyllabus(context, subject_id) {
       let response = await axios.get(`/subjects/${subject_id}/syllabus`)
       if (response.status == 200) {
@@ -171,26 +193,6 @@ export default new Vuex.Store({
         throw new Error(`Error fetching ratings for subject with id: ${subject_id}! Status code: ${response.status}`)
       }
     },
-
-    // doFetchSubjectRatings(context, subject_id) {
-    //   return new Promise((resolve, reject) => {
-    //     axios.get('/subjects/' + subject_id + '/ratings')
-    //       .then(response => {
-    //         context.commit('setSubjectRatings', {
-    //           subject_id: subject_id,
-    //           data: response.data
-    //         })
-    //         resolve(response)
-    //       })
-    //       .catch(error => {
-    //         if (error.response) {
-    //           reject(error.response.data.message)
-    //         } else {
-    //           reject(error.message)
-    //         }
-    //       })
-    //   })
-    // }, 
 
     doFetchDepartments(context) {
       return new Promise((resolve, reject) => {
@@ -373,6 +375,7 @@ export default new Vuex.Store({
       }
     )},
 
+    
 
   } // end of actions
 })
