@@ -81,7 +81,7 @@
                                     <td class="pl-1">{{ selectedStudent.regulation.short_name }}</td>
                                 </tr>
                             </table>
-                            <div class="flex mt-2">
+                            <div class="flex mt-2"> <!-- action buttons -->
                                 <button class="fiex flex-col bg-teal-300 border border-teal-500 text-sm  text-teal-900 py-1 px-2 mr-2 rounded-sm hover:bg-teal-500 hover:text-teal-100" type="button" @click="sendEmail()" title="Send Email">
                                     <svg viewBox="0 0 20 20" fill="currentColor" class="mail w-6 h-6"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
                                 </button>

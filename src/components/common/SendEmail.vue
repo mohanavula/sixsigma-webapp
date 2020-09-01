@@ -47,7 +47,6 @@ export default {
   	props: {
 		to: String,
 		reply_to: String,
-		name:String,
 	},
 	  
 	data() {
@@ -69,8 +68,7 @@ export default {
 			axios.defaults.baseURL = "http://sixsigma.api/api"
 			axios.post("/sendemail", {
 				to: this._to,
-				reply_to: this.reply_to,
-				name: this.name,
+				reply_to: this.reply_to || "sixsigma@ksrmce.ac.in",
 				subject: this.subject,
 				body: this.body
 			})
@@ -84,7 +82,7 @@ export default {
 			})
 			.catch(error => {
 				this.feedback = "failed. Try again"
-				setInterval(() => {
+				setTimeout(() => {
 					console.log(error)
 				}, 2000)
 			})
