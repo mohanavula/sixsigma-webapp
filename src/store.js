@@ -8,34 +8,81 @@ axios.defaults.baseURL = 'http://sixsigma.api/api'
 
 export default new Vuex.Store({
   state: {
+    // reviewd
     user: JSON.parse(localStorage.getItem('user')) || null,
     regulations: JSON.parse(localStorage.getItem('regulations')) || [],
     departments: JSON.parse(localStorage.getItem('departments')) || [],
+    instruction_scheme: JSON.parse(localStorage.getItem('instruction_scheme')) || [],
+
+    // not yet reviwed
     subject_ratings: JSON.parse(localStorage.getItem('subject_ratings')) || [],
     syllabus: JSON.parse(localStorage.getItem('syllabus')) || [],
     academic_classes: JSON.parse(localStorage.getItem('academic_classes')) || [],
+    exams: JSON.parse(localStorage.getItem('exams')) || [],
+    instruction_scheme: JSON.parse(localStorage.getItem('instruction_scheme')) || [],
   },
 
   getters: {
+    // reviewed
     fetchedRegulations: (state) => {
       return state.regulations.length > 0
-    },
-
-    fetchedSpecializations: (state) => (regulation_id) => {
-      return state.regulations.find(r => r.id == regulation_id).hasOwnProperty("specializations")
-    },
-
-    fetchedScheme: (state) => (regulation_id) => {
-      return state.regulations.find(r => r.id == regulation_id).hasOwnProperty("scheme")
-    },
-
-    fetchedSemesters: (state) => (regulation_id) => {
-      return state.regulations.find(r => r.id == regulation_id).hasOwnProperty("semesters")
     },
 
     fetchedDepartments: (state) => {
       return state.departments.length > 0
     },
+
+    fetchedInstructionScheme: (state) => (regulation_id) => {
+      return typeof state.instruction_scheme.find(is => is.regulation_id == regulation_id) == 'object'
+    },
+
+    program(state, regulation_id) {
+      let r = state.regulations.find(r => r.id == regulation_id)
+      if (r == undefined)
+        return {}
+      else
+        return r.program
+    },
+
+    specializations(state, regulation_id) {
+      let r = state.regulations.find(r => r.id == regulation_id)
+      if (r == undefined)
+        return {}
+      else
+        return r.program.specializations
+    },
+
+    semesters(state, regulation_id) {
+      let r = state.regulations.find(r => r.id == regulation_id)
+      if (r == undefined)
+        return {}
+      else
+        return r.semesters
+    },
+
+    instruction_scheme(state, regulation_id) {
+      let is = state.instruction_scheme.find(is => is.regulation_id == regulation_id)
+      if (is == undefined) 
+        return {}
+        else
+        return is.instruction_scheme
+    },
+
+
+
+    // not yet reviwed
+
+    // fetchedInstructionScheme(semester_id) {
+    //   return state.instruction_scheme.
+    // },
+
+    // fetchedSpecializations: (state) => (regulation_id) => {
+    //   return state.regulations.find(r => r.id == regulation_id).hasOwnProperty("specializations")
+    // },
+
+    // fetchedSemesters: (state) => (regulation_id) => {
+    //   return state.regulations.find(r => r.id == regulation_id).hasOwnProperty("semesters")
+    // },
 
     fetchedAcademicClasses: (state) => {
       return state.academic_classes.length > 0
@@ -49,6 +96,10 @@ export default new Vuex.Store({
 
     fetchedSyllabus: (state) => (subject_id) => {
       return state.syllabus.find(s => s.id == subject_id) !== undefined
+    },
+
+    fetchedExams: (state) => {
+      return state.exams.length > 0
     },
 
     getSyllabus: (state) => (subject_id) => {
@@ -80,8 +131,25 @@ export default new Vuex.Store({
   }, 
 
   mutations: {
+    // reviwed
+    setUser(state, user) {
+      state.user = {
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        token: user.token,
+        provider: user.provider,
+      }
+    },
+
     destroyUser(state) {
       state.user = null
+    },
+
+    setRegulations(state, regulations) {
+      state.regulations = Array.from(regulations)
+      localStorage.removeItem('regulations')
+      localStorage.setItem('regulations', JSON.stringify(state.regulations))
     },
 
     setDepartments(state, departments) {
@@ -90,25 +158,34 @@ export default new Vuex.Store({
       localStorage.setItem('departments', JSON.stringify(departments))
     },
 
-    setRegulations(state, regulations) {
-      state.regulations = Array.from(regulations)
-      localStorage.setItem('regulations', JSON.stringify(state.regulations))
+    setInstructionScheme(state, payload) {
+      let is = state.instruction_scheme.find(i => i.regulation_id == payload.regulation_id)
+      if (typeof is == 'object') {
+        is.instruction_scheme = {
+          regulation_id: payload.regulation_id,
+          instruction_scheme: Array.from(payload.scheme)
+        }
+      } else {
+        state.instruction_scheme.push({
+            regulation_id: payload.regulation_id,
+            instruction_scheme: Array.from(payload.scheme)
+          })
+      }
+      localStorage.removeItem('instruction_scheme')
+      localStorage.setItem('instruction_scheme', JSON.stringify(state.instruction_scheme))
     },
+    
+    // not yet reviwed
 
-    setSpecializations(state, payload) {
-      state.regulations.find(r => r.id == payload.regulation_id)['specializations'] = Array.from(payload.specializations)
-      localStorage.setItem('regulations', JSON.stringify(state.regulations))
-    },
+    // setSpecializations(state, payload) {
+    //   state.regulations.find(r => r.id == payload.regulation_id)['specializations'] = Array.from(payload.specializations)
+    //   localStorage.setItem('regulations', JSON.stringify(state.regulations))
+    // },
 
-    setScheme(state, payload) {
-      state.regulations.find(r => r.id == payload.regulation_id)['scheme'] = Array.from(payload.scheme)
-      localStorage.setItem('regulations', JSON.stringify(state.regulations))
-    },
-
-    setSemesters(state, payload) {
-      state.regulations.find(r => r.id == payload.regulation_id)['semesters'] = Array.from(payload.semesters)
-      localStorage.setItem('regulations', JSON.stringify(state.regulations))
-    },
+    // setSemesters(state, payload) {
+    //   state.regulations.find(r => r.id == payload.regulation_id)['semesters'] = Array.from(payload.semesters)
+    //   localStorage.setItem('regulations', JSON.stringify(state.regulations))
+    // },
     
     setSubjectRatings(state, payload) {
       // state.subject_ratings['sr' + payload.subject_id] = JSON.parse(JSON.stringify(payload.data))
@@ -125,6 +202,12 @@ export default new Vuex.Store({
       state.academic_classes = Array.from(academic_classes)
       localStorage.removeItem(academic_classes)
       localStorage.setItem('academic_classes', JSON.stringify(state.academic_classes))
+    },
+
+    setExams(state, exams) {
+      state.exams = Array.from(exams)
+      localStorage.removeItem(exams)
+      localStorage.setItem('exams', JSON.stringify(state.exams))
     },
     
     appendSyllabus(state, payload) {
@@ -146,19 +229,48 @@ export default new Vuex.Store({
         localStorage.setItem('subject_ratings', JSON.stringify(state.subject_ratings))
       }
     },
-
-    setUser(state, user) {
-      state.user = {
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        token: user.token,
-        provider: user.provider,
-      }
-    },
   },
 
   actions: {
+    // reviewed
+    
+    async doFetchRegulations(context) {
+      let response = await axios.get('/regulations')
+      if (response.status == 200) {
+        context.commit('setRegulations', response.data)
+      } else {
+        throw new Error(`Error fetching regulations data! Status code: ${response.status}`)
+      }
+    },
+
+    async doFetchDepartments(context) {
+      let response = await axios.get('/departments')
+      if (response.status == 200) {
+        context.commit('setDepartments', response.data)
+      } else {
+        throw new Error(`Error fetching departments data! Status code: ${response.status}`)
+      }
+    },
+
+    async doFetchInstructionScheme(context, regulation_id) {
+      let response = await axios.get(`/regulations/${regulation_id}/instruction_scheme`)
+      if (response.status == 200) {
+        context.commit('setInstructionScheme', { regulation_id: regulation_id, instruction_scheme: response.data })
+      } else {
+        throw new Error(`Error fetching instruction scheme data! Status code: ${response.status}`)
+      }
+    },
+
+    // not yet reviwed
+
+    async doFetchExams(context) {
+      let response = await axios.get('/academics/exams')
+      if (response.status == 200) {
+        context.commit('setExams', response.data)
+      } else {
+        throw new Error(`Error fetching exams data! Status code: ${response.status}`)
+      }
+    },
 
     async doFetchAcademicClasses(context) {
       let response = await axios.get('/academics/classes')
@@ -192,81 +304,30 @@ export default new Vuex.Store({
       } else {
         throw new Error(`Error fetching ratings for subject with id: ${subject_id}! Status code: ${response.status}`)
       }
-    },
-
-    doFetchDepartments(context) {
-      return new Promise((resolve, reject) => {
-        axios.get('/departments')
-          .then(response => {
-            context.commit('setDepartments', response.data)
-            resolve(response)
-          })
-          .catch(error => {
-            if (error.response) {
-              reject(error.response.data.message)
-            } else {
-              reject(error.message)
-            }
-          })
-      })
     }, 
 
-    doFetchSemesters(context, regulation_id) {
-      return new Promise((resolve, reject) => {
-        axios.get('/regulations/' + regulation_id + "/semesters")
-          .then(response => {
-            context.commit('setSemesters', { regulation_id: regulation_id, semesters: response.data })
-            resolve(response)
-          })
-          .catch(error => {
-            if (error.response) {
-              reject(error.response.data.message)
-            } else {
-              reject(error.message)
-            }
-          })
-      })
-    }, 
-
-    doFetchScheme(context, regulation_id) {
-      return new Promise((resolve, reject) => {
-        axios.get('/regulations/' + regulation_id + "/scheme")
-          .then(response => {
-            context.commit('setScheme', { regulation_id: regulation_id, scheme: response.data })
-            resolve(response)
-          })
-          .catch(error => {
-            if (error.response) {
-              reject(error.response.data.message)
-            } else {
-              reject(error.message)
-            }
-          })
-      })
-    }, 
+    // doFetchSemesters(context, regulation_id) {
+    //   return new Promise((resolve, reject) => {
+    //     axios.get('/regulations/' + regulation_id + "/semesters")
+    //       .then(response => {
+    //         context.commit('setSemesters', { regulation_id: regulation_id, semesters: response.data })
+    //         resolve(response)
+    //       })
+    //       .catch(error => {
+    //         if (error.response) {
+    //           reject(error.response.data.message)
+    //         } else {
+    //           reject(error.message)
+    //         }
+    //       })
+    //   })
+    // },  
 
     doFetchSpecializations(context, regulation_id) {
       return new Promise((resolve, reject) => {
         axios.get('/regulations/' + regulation_id + "/specializations")
           .then(response => {
             context.commit('setSpecializations', { regulation_id: regulation_id, specializations: response.data })
-            resolve(response)
-          })
-          .catch(error => {
-            if (error.response) {
-              reject(error.response.data.message)
-            } else {
-              reject(error.message)
-            }
-          })
-      })
-    },
-
-    doFetchRegulations(context) {
-      return new Promise((resolve, reject) => {
-        axios.get('/regulations')
-          .then(response => {
-            context.commit('setRegulations', response.data)
             resolve(response)
           })
           .catch(error => {

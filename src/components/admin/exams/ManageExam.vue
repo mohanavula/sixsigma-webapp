@@ -2,7 +2,7 @@
     <div class="mt-4">
         <div v-if="isLoading || isError">
             <div class="flex items-start">
-                <div class="w-32">Classes</div>
+                <div class="w-32">Exams</div>
                 <div v-show="isLoading">Fetching...</div>
                 <div v-show="isError">{{ error_message }}</div>
             </div>
@@ -12,13 +12,13 @@
             <div class="flex items-start">
                 <div class="w-32">Exams</div>
                 <div class="flex flex-col">
-                    <div v-if="academic_classes.length == 0">
+                    <div v-if="exams.length == 0">
                         No exams found
                     </div>
                     <div v-else>
-                        <table >
-                            <tr>
-                                <td>Academic Year</td>
+                        <table>
+                            <tr class="border-b border-gray-300">
+                                <td class="pr-2">Academic Year</td>
                                 <td class="px-2">Program</td>
                                 <td class="px-2">Regulation</td>
                                 <td class="px-2">Semester</td>
@@ -27,8 +27,8 @@
                                 <td class="px-2">category</td>
                                 <td>Status</td>
                             </tr>
-                            <tr v-for="exam in exams" :key="exam.id">
-                                <td>{{ academic_year_plus_one(exam.academic_year) }}</td>
+                            <tr v-for="exam in exams" :key="exam.id"  class="border-b border-gray-300">
+                                <td class="pr-2">{{ academic_year_plus_one(exam.academic_year) }}</td>
                                 <td class="px-2">{{ program_short_name(exam.semester_id) }}</td>
                                 <td class="px-2">{{ regulation_short_name(exam.semester_id) }}</td>
                                 <td class="px-2">{{ semester_short_name(exam.semester_id) }}</td>

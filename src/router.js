@@ -66,12 +66,12 @@ export default new Router({
     {
       path: '/programs',
       name: 'programs',
-      component: () => import(/* webpackChunkName: "acad" */ './views/Programs'),
+      component: () => import(/* webpackChunkName: "academic" */ './views/Programs'),
       children: [
         {
           path: 'profile/:id',
           name: 'programProfile',
-          component: () => import(/* webpackChunkName: "acad" */ './components/programs/ProgramProfile'),
+          component: () => import(/* webpackChunkName: "academic" */ './components/programs/ProgramProfile'),
         },
         
       ]

@@ -14,7 +14,7 @@
                             <DashboardIndexCard  :caption="dashboardItem.caption" />
                         </router-link>
                 </div>
-                <div class="content md:ml-2 bg-gray-700 text-gray-200 flex-grow h-full">
+                <div class="content md:ml-2 bg-gray-700 text-gray-200 flex-grow h-full w-full">
                     <router-view></router-view>
                 </div>
             </div>

@@ -2,10 +2,16 @@
     <div class="md:container mx-auto px-4 pt-4">
         <h2 class="text-xl text-gray-800 uppercase font-semibold tracking-wider">Programs</h2>
         <div>
-            <div v-if="isLoading">
-                <div class="shadow-lg rounded-sm bg-gradient-gray-light p-3 mb-1 border border-gray-500 hover:bg-gradient-gray-dark">
-                    <h2 class="text-lg font-semibold text-gray-900">Please wait...</h2>
-                    <hr class="border-2 border-gray-400"> 
+            <div v-if="isLoading || isError">
+                <div class="shadow-lg rounded-sm bg-gradient-gray-light p-3 mb-1 border border-gray-500 hover:bg-gradient-gray-dark text-lg font-semibold text-gray-900">
+                    <div v-if="isLoading" class="">
+                        <img src="../assets/spinner" alt="spinner" class="mr-2">
+                        Please wait...
+                    </div>
+                    <div v-else>
+                        {{ error_message }}
+                    </div>
+                    <hr class="border-2 border-gray-400 mb-2"> 
                 </div>
             </div>
             <div v-else class="mt-2 flex flex-col md:flex-row">
@@ -25,43 +31,33 @@
 <script>
 import RegulationIndexCard from './../components/programs/RegulationIndexCard'
 import { mapState } from 'vuex'
+import { mapGetters } from 'vuex'
 export default {
     components: {
         RegulationIndexCard,
-    },
+
+    }, // components
 
     data() {
         return {
             isLoading: false,
-            isError: false
+            isError: false,
+            error_message: "",
         }
-    },
+    }, // data
 
     computed: {
         ...mapState(['regulations']),
+        ...mapGetters(['fetchedRegulations']),
 
-        // regulations() {
-        //     return this.$store.getters.getRegulations
-        // },
-
-        fetchedRegulations() {
-            return this.$store.getters.fetchedRegulations
-        },
-    },
+    }, // computed
 
     created() {
-        // if(!this.fetchedRegulations) {
-        //     this.isLoading = true
-        //     this.$store.dispatch('doFetchRegulations').then(() => {
-        //         this.isLoading = false
-        //     }).catch(() => {
-        //         this.isLoading = false
-        //     })
-        // }
         if (this.fetchedRegulations) return
         let vm = this
         vm.isLoading = true
         vm.isError = false
+        vm.error_message = ""
         vm.fetchBasicData()
             .then(() => {
                 vm.isLoading = false
@@ -70,9 +66,9 @@ export default {
             .catch((e) => {
                 vm.isLoading = false
                 vm.isError = true
-                console.log(e)
+                vm.error_message = e.message
             })
-    },
+    }, // created
 
     methods: {
         async fetchBasicData() {
@@ -81,7 +77,7 @@ export default {
             await Promise.all([regulationsPromise, departmentsPromise])
         },
 
-    }
+    }, // methods
     
 }
 </script>

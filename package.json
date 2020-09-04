@@ -12,6 +12,7 @@
     "core-js": "^2.6.5",
     "postcss-cli": "^7.1.1",
     "tailwindcss": "^1.4.6",
+    "v-calendar": "^1.0.8",
     "vue": "^2.6.10",
     "vue-router": "^3.0.3",
     "vuex": "^3.0.1"

@@ -42,31 +42,29 @@
                 <div class="w-24 text-xs text-right uppercase tracking-wider mr-3 border-b border-gray-400">Performance</div>
                 <div class="w-24 text-xs text-right uppercase tracking-wider mr-3 border-b border-gray-400">Feedback</div>
             </div>
-            <Scheme v-if="activeTab == 'Scheme'" :regulation="regulation" class="my-6"/>
-            <Subjects v-if="activeTab == 'Subjects'" :regulation="regulation" class="my-6"/>
-            <!-- <keep-alive>
-            <component :is="activeTab"></component>
-            </keep-alive> -->
+            <scheme v-if="activeTab == 'Scheme'" :regulation="regulation" class="my-6"/>
+            <subjects v-if="activeTab == 'Subjects'" :regulation="regulation" class="my-6"/>
         </div>
     </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
+import { mapGetters } from 'vuex'
 import Scheme from './Scheme'
 import Subjects from './Subjects'
 export default {
     components: {
         Scheme,
         Subjects,
-    },
+    }, // components
 
     data() {
         return {
             isLoading: false,
             activeTab: "Subjects",
         }
-    },
+    }, // data
 
     computed: {
         ...mapState(['regulations']),
@@ -89,7 +87,7 @@ export default {
 
         },
 
-    }, // end of computed
+    }, // computed
 
     created() {
         if (this.fetchedScheme) return
@@ -102,7 +100,7 @@ export default {
             .finally(() => {
                 vm.isLoading = false
             }) 
-    },
+    }, // created
 
     methods: {
         showTab(tab) {
@@ -129,7 +127,7 @@ export default {
 
             let responses = await Promise.all([specializationsPromise, semestersPromise, schemePromise])
         },
-    },
+    }, // methods
 
 }
 </script>

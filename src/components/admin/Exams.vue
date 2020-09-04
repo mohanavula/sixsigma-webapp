@@ -37,7 +37,8 @@
                     <div v-for="link in explore_links" :key="link" class="cursor-pointer w-24 text-xs text-right uppercase tracking-wider mr-3" :class="activeTab == link ? 'border-b-2 border-red-500' : 'border-b border-gray-400'" @click="activeTab = link">{{ link }}</div>
                 </div> <!-- explore commands end -->
 
-                <ManageExams v-show="activeTab == 'Exams'" />
+                <manage-exam v-show="activeTab == 'Exams'" />
+                <exam-schedules v-show="activeTab == 'Schedules'" />
 
             </div>
         </div>
@@ -46,16 +47,25 @@
 </template>
 
 <script>
+import ManageExam from './exams/ManageExam'
+import ExamSchedules from './exams/ExamSchedules'
 export default {
+    components: {
+        ManageExam,
+        ExamSchedules,
+
+    },
+
     data() {
         return {
-            active_exams: 10,
+            isLoading: false,
+            active_exams: 20,
             active_registrations: 1200,
             total_exams_held: 120,
             total_registrations: 4500,
             next_exam_on: "15-Sep-2020",
 
-            explore_links: ['Exams', 'Registrations', 'Schedules', 'Attendance', 'Marks', 'Reports',],
+            explore_links: ['Exams', 'Schedules','Registrations', 'Attendance', 'Marks', 'Reports',],
             activeTab: 'Exams',
         }
     }

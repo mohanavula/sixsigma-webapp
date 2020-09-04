@@ -9,7 +9,7 @@
 				</button>
 			</header>
 			<div v-if="isLoading">
-				Please wait. Loading date...
+				Please wait. Loading data...
 			</div>
 			<section v-else class="modalbody py-2">
 				<div class="flex items-start my-2">
@@ -78,7 +78,7 @@
 							</ul>
 						</div>
 					</div>
-					<div v-if="semesters.length > 0" class="w-1/5 mx-3 mt-auto">
+					<div v-if="filtered_semesters.length > 0" class="w-1/5 mx-3 mt-auto">
 						<button :disabled="addClassesBtnDisabled" class="bg-gradient-gray-light  border-gray-500 text-sm border text-gray-900 py-1 px-2 rounded-sm" :class="addClassesBtnDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gradient-gray-dark hover:border-teal-700'" type="button" @click="add_classes()">
 							Add Classes
 						</button>
@@ -178,12 +178,7 @@ export default {
         specializations() {
 			let s = []
 			if (this.selected_regulation.program.hasOwnProperty('specializations'))
-				{
 					s = Array.from(this.selected_regulation.program.specializations)
-					// s.forEach(i => {
-					// 	this.$set(i, 'selected', false)
-					// })
-				}
 			return s
         },
 
